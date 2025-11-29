@@ -1,0 +1,48 @@
+# MyApp - Description
+# Replace "myapp" with your app name throughout
+
+services:
+  myapp:
+    build: .
+    container_name: myapp
+    restart: unless-stopped
+    env_file:
+      - ../../.env
+    environment:
+      - DATABASE_URL=${MYAPP_DATABASE_URL}
+      - LOG_LEVEL=${MYAPP_LOG_LEVEL:-info}
+      - TZ=${TZ}
+      # Authentik SSO (optional)
+      - AUTHENTIK_CLIENT_ID=${MYAPP_AUTHENTIK_CLIENT_ID:-}
+      - AUTHENTIK_CLIENT_SECRET=${MYAPP_AUTHENTIK_CLIENT_SECRET:-}
+      - AUTHENTIK_DOMAIN=${AUTHENTIK_DOMAIN:-auth.${DOMAIN_BASE}}
+    networks:
+      - public_proxy
+      - private
+    logging:
+      driver: json-file
+      options:
+        max-size: "${DOCKER_LOG_MAX_SIZE:-10m}"
+        max-file: "${DOCKER_LOG_MAX_FILE:-3}"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    security_opt:
+      - no-new-privileges:true
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+        reservations:
+          memory: 128M
+
+networks:
+  public_proxy:
+    external: true
+    name: srv_public_proxy
+  private:
+    external: true
+    name: srv_private
