@@ -49,8 +49,10 @@ Examples:
 - API Key: X-API-Key header, user.api_key in DB
 
 ## Ports
-- Update /srv/ports.env, run /srv/scripts/sync-ports.sh
-- Convention: xx00=API, xx01=UI
+- Check /srv/ports.env for next available port (see "# Next:" line)
+- Port ranges: 81xx for apps (8100, 8110, 8120...)
+- Update docker-compose.yml healthcheck with your port BEFORE running sync script
+- Run: /srv/scripts/sync-ports.sh
 
 ## Database
 - Connection: pgbouncer:5432
