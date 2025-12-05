@@ -81,6 +81,7 @@ Reference: /srv/INSTANCE.md for shared services
 - Base: python:3.11-slim
 - Networks: public_proxy, private
 - Healthcheck: GET /health
+- Dev: Volume mounts for static/ and templates/ enable live reload without rebuild (remove before commit)
 
 ## Rules
 - Config via env only, no secrets in git
