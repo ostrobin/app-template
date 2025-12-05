@@ -9,24 +9,30 @@ Reference: /srv/INSTANCE.md for shared services
 ## Code Quality
 - Black (formatter), Ruff (linter), config in pyproject.toml
 
-## Scalability Principles (ALL code)
-- No hardcoded values: use variables/constants/config for anything reused
-- No one-off solutions; prefer reusable patterns
-- Keep files small: CSS ~150 lines, Python modules focused and single-purpose
-- DRY: extract common logic to shared utilities; copy-paste is a red flag
-- **STRICT: Any deviation from these principles requires explicit user approval**
+## Scalability Principles - ENFORCED BY PRE-COMMIT HOOK
 
-Examples:
+**Pre-commit hook validates (.git/hooks/pre-commit):**
+- CSS ≤ 150 lines
+- No hex colors outside `:root`
+- No `if slug == "x"` patterns in services
+
+**BEFORE writing code, ask:**
+1. "Does this work for N contexts/items without code changes?"
+2. "All colors in `:root`, all spacing in CSS variables?"
+3. "Am I copy-pasting? → Extract to shared function"
+
 | ❌ WRONG | ✅ RIGHT |
 |----------|----------|
 | `color: #8ab4f8;` | `color: var(--accent);` |
 | `.save-btn { padding: 8px 16px; }` | `button { padding: 8px 16px; }` |
-| Copy-pasting 10 lines of validation | `from app.utils import validate_input`
+| `if context.slug == "foo":` | Generic JSONB handler |
+| Copy-paste validation | `from app.utils import validate` |
 
 ## CSS/Frontend
-- Use CSS variables (`:root`) for colors/spacing/sizing
-- Style base elements (button, input) globally, not per-component
-- Prefer inheritance over component-specific classes
+- Colors ONLY in `:root` block (exception: `#000`, `#fff`)
+- Style base elements (`button`, `input`, `select`) globally
+- Utility classes (`.card`, `.label`, `.tag`) over component-specific
+- Max 150 lines - refactor if approaching limit
 
 ## Development Workflow
 1. Backend first: routes, services, models
